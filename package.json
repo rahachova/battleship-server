@@ -10,9 +10,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "uuid": "^10.0.0",
     "ws": "^8.18.0"
   },
   "devDependencies": {
+    "@types/uuid": "^10.0.0",
     "@types/ws": "^8.5.12",
     "dotenv": "^16.4.5",
     "eslint": "^9.13.0",
