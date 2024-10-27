@@ -1,9 +1,7 @@
 import { IPlayer } from "./types/common";
-
-interface IDataBase {
-  players: Record<string, IPlayer>;
-}
+import { IDataBase } from "./types/db";
 
 export const db: IDataBase = {
   players: {},
+  rooms: [],
 };

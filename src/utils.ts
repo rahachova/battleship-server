@@ -1,7 +1,7 @@
 import { IRequestMessage, IResponseMessage } from "./types/messages";
 import { RawData } from "ws";
 
-export const parseMessage = (message: RawData): IRequestMessage => {
+export const parseMessage = (message: RawData): IRequestMessage<unknown> => {
   const messageStr = message.toString();
   const { data, type } = JSON.parse(messageStr);
   return {

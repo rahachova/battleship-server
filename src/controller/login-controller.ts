@@ -6,25 +6,13 @@ import { stringifyMessage } from "../utils";
 
 export const handleLoginMessage = (
   { name, password }: IRequestLoginData,
-  ws: WebSocket
+  ws: WebSocket,
+  sessionId: string
 ) => {
-  if (db.players[name] && db.players[name].isActive) {
-    ws.send(
-      stringifyMessage({
-        type: "reg",
-        data: {
-          name,
-          error: true,
-          errorText: `User ${name} is already logged in`,
-        },
-        id: 0,
-      })
-    );
-
-    console.log(`Player ${name} is already logged in`);
-  } else if (db.players[name]) {
+  if (db.players[name]) {
     const player = db.players[name];
     if (password === player.password) {
+      player.sessionId = sessionId;
       ws.send(
         stringifyMessage({
           type: "reg",
@@ -49,7 +37,7 @@ export const handleLoginMessage = (
       console.log(`Invalid password for player ${name}`);
     }
   } else {
-    const newUserId = addNewUser({ name, password });
+    const newUserId = addNewUser({ name, password, sessionId });
 
     if (newUserId) {
       ws.send(
@@ -60,7 +48,7 @@ export const handleLoginMessage = (
         })
       );
 
-      console.log(`Player ${name} registred and logged in`);
+      console.log(`Player ${name} registred andlogged in`);
     } else {
       ws.send(
         stringifyMessage({
@@ -79,7 +67,11 @@ export const handleLoginMessage = (
   }
 };
 
-const addNewUser = ({ name, password }: IRequestLoginData): string | void => {
+const addNewUser = ({
+  name,
+  password,
+  sessionId,
+}: IRequestLoginData): string | void => {
   if (name && password) {
     const newPlayerId = uuidv4();
 
@@ -87,7 +79,7 @@ const addNewUser = ({ name, password }: IRequestLoginData): string | void => {
       id: newPlayerId,
       name,
       password: password,
-      isActive: true,
+      sessionId,
     };
 
     return newPlayerId;

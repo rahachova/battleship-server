@@ -3,6 +3,11 @@
 export interface IRequestLoginData {
   name: string;
   password: string;
+  sessionId: string;
+}
+
+export interface IRequestAddUserToRoomData {
+  indexRoom: string;
 }
 
 export interface IResponseLoginData {
@@ -12,14 +17,22 @@ export interface IResponseLoginData {
   errorText?: string;
 }
 
-export interface IRequestMessage {
-  type: "reg";
-  data: IRequestLoginData;
+export interface IResponseRoomData {
+  roomId: string;
+  roomUsers: Array<{
+    name: string;
+    index: string;
+  }>;
+}
+
+export interface IRequestMessage<T> {
+  type: "reg" | "create_room" | "add_user_to_room";
+  data: T;
 }
 
 export interface IResponseMessage {
-  type: "reg";
-  data: IResponseLoginData;
+  type: "reg" | "update_room";
+  data: IResponseLoginData | IResponseRoomData[];
   id: 0;
 }
 

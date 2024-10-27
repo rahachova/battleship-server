@@ -2,6 +2,7 @@ import { WebSocketServer } from "ws";
 import dotenv from "dotenv";
 import { handleClientMessage } from "./controller";
 import { parseMessage } from "./utils";
+import { v4 as uuidv4 } from "uuid";
 
 dotenv.config();
 
@@ -9,13 +10,13 @@ export const server = () => {
   const PORT = process.env.PORT || 3000;
   const wss = new WebSocketServer({ port: PORT as number });
 
-  wss.on("connection", (ws) => {
-    let username;
+  wss.on("connection", (ws, req) => {
+    const sessionId = uuidv4();
     console.log("New client connected");
     ws.on("message", (message) => {
       try {
         const parsedMessage = parseMessage(message);
-        username = handleClientMessage(parsedMessage, ws);
+        handleClientMessage(parsedMessage, ws, sessionId);
       } catch (error) {
         console.error("Failed to process message:", error);
       }
