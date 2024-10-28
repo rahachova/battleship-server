@@ -13,6 +13,7 @@ export const handleLoginMessage = (
     const player = db.players[name];
     if (password === player.password) {
       player.sessionId = sessionId;
+      player.ws = ws;
       ws.send(
         stringifyMessage({
           type: "reg",
@@ -37,7 +38,7 @@ export const handleLoginMessage = (
       console.log(`Invalid password for player ${name}`);
     }
   } else {
-    const newUserId = addNewUser({ name, password, sessionId });
+    const newUserId = addNewUser({ name, password, sessionId }, ws);
 
     if (newUserId) {
       ws.send(
@@ -67,11 +68,10 @@ export const handleLoginMessage = (
   }
 };
 
-const addNewUser = ({
-  name,
-  password,
-  sessionId,
-}: IRequestLoginData): string | void => {
+const addNewUser = (
+  { name, password, sessionId }: IRequestLoginData,
+  ws: WebSocket
+): string | void => {
   if (name && password) {
     const newPlayerId = uuidv4();
 
@@ -80,6 +80,7 @@ const addNewUser = ({
       name,
       password: password,
       sessionId,
+      ws,
     };
 
     return newPlayerId;

@@ -3,5 +3,6 @@ import { IDataBase } from "./types/db";
 
 export const db: IDataBase = {
   players: {},
+  games: {},
   rooms: [],
 };

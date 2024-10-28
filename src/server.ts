@@ -10,13 +10,21 @@ export const server = () => {
   const PORT = process.env.PORT || 3000;
   const wss = new WebSocketServer({ port: PORT as number });
 
+  function broadcast(message: string) {
+    wss.clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(message);
+      }
+    });
+  }
+
   wss.on("connection", (ws, req) => {
     const sessionId = uuidv4();
     console.log("New client connected");
     ws.on("message", (message) => {
       try {
         const parsedMessage = parseMessage(message);
-        handleClientMessage(parsedMessage, ws, sessionId);
+        handleClientMessage(parsedMessage, ws, sessionId, broadcast);
       } catch (error) {
         console.error("Failed to process message:", error);
       }
